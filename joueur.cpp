@@ -9,7 +9,7 @@
  *
  */
 #include "joueur.h"
-void initialiserGameState(GameState* gameState, Joueur* joueur)
+void initialiserGameState(GameState *gameState, Joueur *joueur)
 {
     gameState->numLettre = 0;
     gameState->numJoueur = 0;
@@ -23,7 +23,7 @@ void initialiserGameState(GameState* gameState, Joueur* joueur)
     joueur->num = 0;
 }
 
-bool wordExists(const char* word)
+bool wordExists(const char *word)
 {
     bool found = false;
     ifstream dictionary("ods4.txt");
@@ -40,36 +40,33 @@ bool wordExists(const char* word)
     return found;
 }
 
-char** getMatchingWords(char* prefix, int prefixLength, int* numMatchingWords) {
-    GameState gamestate;
+char **getMatchingWords(char *prefix, int prefixLength, int *numMatchingWords)
+{
     const int MAX_MATCHING_WORDS = MAX_LIGNES;
-    char** matchingWords = new char* [MAX_MATCHING_WORDS];
-    //char** matchingWords = (char**)malloc(MAX_MATCHING_WORDS * sizeof(char*));
+    char **matchingWords = new char *[MAX_MATCHING_WORDS];
     *numMatchingWords = 0;
 
-    FILE* dictionary = fopen("ods4.txt", "r");
+    ifstream dictionary("ods4.txt");
     char line[MAX_lettre];
 
-    // Lire le fichier de dictionnaire ligne par ligne
-    while (fgets(line, MAX_lettre, dictionary)) {
+    while (dictionary.getline(line, MAX_lettre))
+    {
         line[strlen(line) - 1] = '\0';
-        if (strncmp(line, prefix, prefixLength) == 0) {
-            // Add matching word to list
-            if (*numMatchingWords < MAX_MATCHING_WORDS) {
+        if (strncmp(line, prefix, prefixLength) == 0)
+        {
+            if (*numMatchingWords < MAX_MATCHING_WORDS)
+            {
                 matchingWords[*numMatchingWords] = new char[MAX_lettre];
-                //matchingWords[*numMatchingWords] = (char*)malloc(MAX_lettre * sizeof(char));
                 strcpy(matchingWords[*numMatchingWords], line);
                 (*numMatchingWords)++;
             }
         }
     }
-    // Fermer le fichier du dictionnaire
-    fclose(dictionary);
-
-    // Renvoyer la liste des mots correspondants
+    dictionary.close();
     return matchingWords;
 }
-void saisirJoueur(GameState* gameState, char* playerTypeString)
+
+void saisirJoueur(GameState *gameState, char *playerTypeString)
 {
     int numPlayers = strlen(playerTypeString);
     if (numPlayers < 2)
@@ -98,7 +95,7 @@ void saisirJoueur(GameState* gameState, char* playerTypeString)
     }
 }
 
-char getPlayerInput(GameState* gameState, Joueur* player)
+char getPlayerInput(GameState *gameState, Joueur *player)
 {
     if (player->nature == 'H')
     {
@@ -116,24 +113,24 @@ char getPlayerInput(GameState* gameState, Joueur* player)
     }
     return 0;
 }
-void pointExclamation(GameState* gameState)
+void pointExclamation(GameState *gameState)
 {
-    Joueur* index_player = &gameState->joueur[gameState->index_joueur];
+    Joueur *index_player = &gameState->joueur[gameState->index_joueur];
     index_player->life += 0.25;
 
     cout << "le joueur " << index_player->num << index_player->nature << " abandonne la manche et prend un quart de singe" << endl;
     showQuartSinge(gameState);
 
-    //gameState->index_joueur = (gameState->index_joueur + gameState->numJoueur - 1) % gameState->numJoueur;
-    //gameState->numLettre = 0;
+    // gameState->index_joueur = (gameState->index_joueur + gameState->numJoueur - 1) % gameState->numJoueur;
+    // gameState->numLettre = 0;
     gameState->index_joueur = (gameState->index_joueur + gameState->numJoueur - 1) % gameState->numJoueur;
     gameState->index_joueur = (gameState->index_joueur + 1) % gameState->numJoueur; // give the next player a chance to play
     gameState->numLettre = 0;
 }
-void pointInterrogation(GameState* gameState, Joueur* index_joueur)
+void pointInterrogation(GameState *gameState, Joueur *index_joueur)
 {
-    Joueur* previousPlayer = &gameState->joueur[(gameState->index_joueur + gameState->numJoueur - 1) % gameState->numJoueur];
-    Joueur* currentPlayer = &gameState->joueur[gameState->index_joueur];
+    Joueur *previousPlayer = &gameState->joueur[(gameState->index_joueur + gameState->numJoueur - 1) % gameState->numJoueur];
+    Joueur *currentPlayer = &gameState->joueur[gameState->index_joueur];
     char word[MAX_lettre];
     if (previousPlayer->nature == 'H')
     {
@@ -149,7 +146,8 @@ void pointInterrogation(GameState* gameState, Joueur* index_joueur)
     {
         return;
     }
-    for (int i = 0; i < strlen(word); i++) {
+    for (int i = 0; i < strlen(word); i++)
+    {
         word[i] = toupper(word[i]);
     }
     if ((strncmp(word, gameState->lettre, gameState->numLettre) != 0) && (strncmp(gameState->chosenWord, gameState->lettre, gameState->numLettre) != 0))
@@ -159,7 +157,8 @@ void pointInterrogation(GameState* gameState, Joueur* index_joueur)
 
         showQuartSinge(gameState);
     }
-    else if (wordExists(word)) {
+    else if (wordExists(word))
+    {
         currentPlayer->life += 0.25;
         cout << "le mot " << word << " existe, le joueur " << currentPlayer->num << currentPlayer->nature << " prend un quart de singe" << endl;
         gameState->index_joueur++;
@@ -173,24 +172,25 @@ void pointInterrogation(GameState* gameState, Joueur* index_joueur)
         showQuartSinge(gameState);
     }
     // Si le mot n'existe pas dand le dictionnaire
-    else {
+    else
+    {
         previousPlayer->life += 0.25;
         cout << "le mot " << word << " n'existe pas. Joueur " << previousPlayer->num << previousPlayer->nature << " prends un quart de singe" << endl;
         showQuartSinge(gameState);
     }
-    //gameState->index_joueur = (gameState->index_joueur +1) % gameState->numJoueur;
+    // gameState->index_joueur = (gameState->index_joueur +1) % gameState->numJoueur;
     gameState->index_joueur = (gameState->index_joueur + gameState->numJoueur - 1) % gameState->numJoueur;
     gameState->numLettre = 0;
 }
 
-void inputLettre(char input, GameState* gameState, Joueur* index_joueur)
+void inputLettre(char input, GameState *gameState, Joueur *index_joueur)
 {
     // const int MAX_MOT = 26;
     char word[MAX_lettre];
     strncpy(word, gameState->lettre, gameState->numLettre);
     word[gameState->numLettre] = input;
     word[gameState->numLettre + 1] = '\0';
-    Joueur* currentPlayer = &gameState->joueur[gameState->index_joueur];
+    Joueur *currentPlayer = &gameState->joueur[gameState->index_joueur];
     if (wordExists(word) && gameState->numLettre > 2)
     {
         if (currentPlayer->nature == 'H' || currentPlayer->nature == 'R')
@@ -201,8 +201,8 @@ void inputLettre(char input, GameState* gameState, Joueur* index_joueur)
         cout << "le mot " << word << " existe, le joueur " << currentPlayer->num << currentPlayer->nature << " prend un quart de singe" << endl;
         showQuartSinge(gameState);
 
-        //gameState->index_joueur = (gameState->index_joueur + gameState->numJoueur - 1) % gameState->numJoueur;
-       //gameState->index_joueur = -1;
+        // gameState->index_joueur = (gameState->index_joueur + gameState->numJoueur - 1) % gameState->numJoueur;
+        // gameState->index_joueur = -1;
         gameState->index_joueur = (gameState->index_joueur + gameState->numJoueur - 1) % gameState->numJoueur;
         gameState->numLettre = 0;
         // gameState->index_joueur = (gameState->index_joueur + gameState->numJoueur) % gameState->numJoueur;
@@ -215,7 +215,7 @@ void inputLettre(char input, GameState* gameState, Joueur* index_joueur)
     gameState->index_joueur = (gameState->index_joueur + 1) % gameState->numJoueur;
 }
 
-char playRobot(GameState* gameState)
+char playRobot(GameState *gameState)
 {
     char prefix[MAX_lettre];
     strncpy(prefix, gameState->lettre, gameState->numLettre);
@@ -223,13 +223,13 @@ char playRobot(GameState* gameState)
 
     // Get a list of words that match the prefix
     int numMatchingWords;
-    char** matchingWords = getMatchingWords(prefix, gameState->numLettre, &numMatchingWords);
+    char **matchingWords = getMatchingWords(prefix, gameState->numLettre, &numMatchingWords);
 
     // choisir un mot au hasard dans la liste des mots correspondants
     if (numMatchingWords > 0)
     {
         int randomIndex = rand() % numMatchingWords;
-        char* chosenWord = matchingWords[randomIndex];
+        char *chosenWord = matchingWords[randomIndex];
 
         // Stocke le mot choisi dans gameState
         strcpy(gameState->chosenWord, chosenWord);
@@ -249,11 +249,11 @@ char playRobot(GameState* gameState)
             return chosenWord[gameState->numLettre];
         }
     }
-    // Si aucun mot correspondant n'a été trouvé return '?'
+    // Si aucun mot correspondant n'a ï¿½tï¿½ trouvï¿½ return '?'
     cout << '?' << endl;
     return '?';
 }
-void checkGameOver(GameState* gameState)
+void checkGameOver(GameState *gameState)
 {
     for (int i = 0; i < gameState->numJoueur; i++)
     {
@@ -264,7 +264,7 @@ void checkGameOver(GameState* gameState)
         }
     }
 }
-void showQuartSinge(GameState* gameState)
+void showQuartSinge(GameState *gameState)
 {
     for (int i = 0; i < gameState->numJoueur; i++)
     {
@@ -274,6 +274,7 @@ void showQuartSinge(GameState* gameState)
     cout << " " << endl;
 }
 
-void deleteallo(GameState* gameState, Joueur* joueur) {
+void deleteallo(GameState *gameState, Joueur *joueur)
+{
     delete[] gameState->joueur;
 }
