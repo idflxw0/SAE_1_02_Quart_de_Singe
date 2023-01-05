@@ -49,6 +49,12 @@ struct GameState
  * @param joueur: Pointeur vers la structure `Joueur` à initialiser
  */
 void initialiserGameState(GameState* gameState, Joueur* joueur);
+
+/**
+ * @brief Permet de compter les lignes totale de dictionnaire.
+ * @return count: ligne total existe dans le dictionnaire.
+ */
+int dictionary();
 /**
  * @brief Cette fonction Renvoie une liste de mots d'un dictionnaire qui correspondent à un préfixe donné.
  *L'appelant est responsable de la libération de la mémoire allouée au tableau et à ses éléments.

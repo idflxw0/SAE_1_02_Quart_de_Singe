@@ -40,9 +40,24 @@ bool wordExists(const char *word)
     return found;
 }
 
+int dictionary() {
+    ifstream fic;
+    fic.open("ods4.txt");
+    if (fic.fail()) {
+        cerr << "erreur lors de l'ouverture du dictionnaire" << endl;
+        exit(1);
+    }
+    char item[MAX_lettre];
+    unsigned int count = 0;
+    while (fic.getline(item, MAX_lettre)) {
+        count++;
+    }
+    return count;
+}
+
 char **getMatchingWords(char *prefix, int prefixLength, int *numMatchingWords)
 {
-    const int MAX_MATCHING_WORDS = MAX_LIGNES;
+    const int MAX_MATCHING_WORDS = dictionary();
     char **matchingWords = new char *[MAX_MATCHING_WORDS];
     *numMatchingWords = 0;
 
@@ -88,7 +103,7 @@ void saisirJoueur(GameState *gameState, char *playerTypeString)
         else
         {
             cerr << "Lettre invalide" << endl;
-            break;
+            continue;
         }
         gameState->joueur[i].num = i + 1;
         gameState->joueur[i].life = 0;

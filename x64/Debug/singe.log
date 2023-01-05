@@ -1,4 +1,5 @@
 ﻿  joueur.cpp
-F:\BUT1\Semestre 1\Periode B\Programmation\Visual Studio\singe\joueur.cpp(44,15): warning C4101: 'gamestate': unreferenced local variable
-F:\BUT1\Semestre 1\Periode B\Programmation\Visual Studio\singe\joueur.cpp(72,46): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+F:\BUT1\Semestre 1\Periode B\Programmation\Visual Studio\singe\joueur.cpp(86,46): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+  main.cpp
+  Generating Code...
   singe.vcxproj -> F:\BUT1\Semestre 1\Periode B\Programmation\Visual Studio\singe\x64\Debug\singe.exe
